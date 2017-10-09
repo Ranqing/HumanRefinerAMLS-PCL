@@ -59,9 +59,9 @@ void PointcloudProcesser::load_range_grid_datas(const vector<cv::Vec3f> &points,
             m_cloud->points[i].g = colors[i].val[1];
             m_cloud->points[i].r = colors[i].val[2];
         } else {
-            m_cloud->points[i].x = 0;   //std::numeric_limits<float>::quiet_NaN();  //or all zeros
-            m_cloud->points[i].y = 0;   //std::numeric_limits<float>::quiet_NaN();
-            m_cloud->points[i].z = 0;   //std::numeric_limits<float>::quiet_NaN();
+            m_cloud->points[i].x = NAN; //std::numeric_limits<float>::quiet_NaN();  //or all zeros
+            m_cloud->points[i].y = NAN; //std::numeric_limits<float>::quiet_NaN();
+            m_cloud->points[i].z = NAN; //std::numeric_limits<float>::quiet_NaN();
         }
     }
 
@@ -72,6 +72,10 @@ void PointcloudProcesser::load_range_grid_datas(const vector<cv::Vec3f> &points,
         m_is_loaded = true;
     }
     cout << "end of loading range grid datas..." << endl;
+
+//    string out_filename = "../output/test_load_range_grid_data.ply";
+//    save_ply(out_filename);
+//    exit(1);
 }
 
 boost::shared_ptr<pcl::visualization::PCLVisualizer> qing_rgb_vis(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud) {

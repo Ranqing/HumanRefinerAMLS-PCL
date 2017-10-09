@@ -75,7 +75,8 @@ void qing_dsp_to_depth_range_grid(float *ptr_dsp, unsigned char *ptr_msk, unsign
         for (int x = 0; x < w; ++x) {
             if (0 == ptr_msk[idx] || 0 == ptr_dsp[idx]) {
                 points[idx] = cv::Vec3f(PT_UNDEFINED, PT_UNDEFINED, PT_UNDEFINED);
-            } else {
+            }
+            else {
                 double uvd1[4], xyzw[4];
                 uvd1[0] = x + crop_point.x;
                 uvd1[1] = y + crop_point.y;
@@ -99,7 +100,7 @@ void qing_dsp_to_depth_range_grid(float *ptr_dsp, unsigned char *ptr_msk, unsign
 
 void
 dsp_to_depth(const string data_folder, const string dsp_txt_name, const string dsp_filename, const string img_filename,
-             const string msk_filename, const string stereo_filename,
+             const string msk_filename, const string stereo_filename, const float scale,
              int &width, int &height, vector<cv::Vec3f> &points, vector<cv::Vec3f> &colors) {
     string imgname = data_folder + img_filename;
     string mskname = data_folder + msk_filename;
@@ -138,6 +139,14 @@ dsp_to_depth(const string data_folder, const string dsp_txt_name, const string d
     double stereomtx[4][4];
     vector<float> dspdata(0);
     read_in_stereo_datas(stereoname, pt, based, stereomtx);
+    if (1.0 != scale) {
+        pt.x /= scale;
+        pt.y /= scale;
+        based /= scale;
+        stereomtx[0][3] /= scale;
+        stereomtx[1][3] /= scale;
+        stereomtx[2][3] /= scale;
+    }
     cout << "start point: " << pt << endl;
     cout << "base d: " << based << endl;
     cout << "stereomtx: \n"
@@ -148,12 +157,12 @@ dsp_to_depth(const string data_folder, const string dsp_txt_name, const string d
     read_in_disp_datas(dsptxt, height, width, dspdata);
     cout << "disp size: " << dspdata.size() << endl;
 
-    uchar *pmsk = msk.ptr < unsigned
-    char > (0);
-    uchar *pimg = img.ptr < unsigned
-    char > (0);
+    uchar *pmsk = msk.ptr < uchar > (0);
+    uchar *pimg = img.ptr < uchar > (0);
+
     qing_dsp_to_depth_range_grid(&dspdata.front(), pmsk, pimg, stereomtx, pt, based, width, height, points, colors);
     cout << "end of qing_dsp_to_depth_range_grid." << endl;
+
 }
 
 #endif //AMLS_PCL_DISP_H
