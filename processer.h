@@ -33,8 +33,9 @@ public:
 
     void save_ply(const string &outfile);
 
-    void load_range_grid_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3f> &colors, const int &height,
-                               const int &width);
+    void load_range_grid_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3b> &colors, const int &height, const int &width);
+
+    void load_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3b> &colors);
 
     void outliers_removal(int times = 1);
 

@@ -38,7 +38,7 @@ void PointcloudProcesser::save_ply(const string &outfile) {
     cout << "saving " << outfile << endl;
 }
 
-void PointcloudProcesser::load_range_grid_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3f> &colors,
+void PointcloudProcesser::load_range_grid_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3b> &colors,
                                                 const int &height, const int &width) {
     m_cloud->clear();
     m_cloud_filtered->clear();
@@ -76,6 +76,29 @@ void PointcloudProcesser::load_range_grid_datas(const vector<cv::Vec3f> &points,
 //    string out_filename = "../output/test_load_range_grid_data.ply";
 //    save_ply(out_filename);
 //    exit(1);
+}
+
+void PointcloudProcesser::load_datas(const vector<cv::Vec3f> &points, const vector<cv::Vec3b> &colors) {
+    m_cloud->clear();
+    m_cloud_filtered->clear();
+
+    int size = colors.size();
+    for(int i = 0; i < size; ++i) {
+        QingPoint pt;
+        pt.x = points[i].val[0];
+        pt.y = points[i].val[1];
+        pt.z = points[i].val[2];
+        pt.b = colors[i].val[0];
+        pt.g = colors[i].val[1];
+        pt.r = colors[i].val[2];
+
+        m_cloud->points.push_back(pt);
+    }
+    size = m_cloud->width * m_cloud->height;
+    if (0 == size) { m_is_loaded = false; }
+    else { m_is_loaded = true; }
+    cout << "Pointcloud size: " << m_cloud->width * m_cloud->height
+         << " data points (" << pcl::getFieldsList(*m_cloud) << "). " << endl;
 }
 
 boost::shared_ptr<pcl::visualization::PCLVisualizer> qing_rgb_vis(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud) {
