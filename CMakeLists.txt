@@ -22,7 +22,8 @@ file(GLOB PROJECT_FILES
         "main.cpp"
         "processer.cpp"
         "processer.h"
-
+        "disp.cpp"
+        "disp.h"
 )
 
 if(WITH_OPENCV)
@@ -38,7 +39,7 @@ if(WITH_PCL)
   add_definitions(${PCL_DEFINITIONS})
 endif(WITH_PCL)
 
-add_executable ( ${PROJECT_NAME} ${PROJECT_FILES} reader.h disp.h)
+add_executable ( ${PROJECT_NAME} ${PROJECT_FILES} reader.h disp.cpp disp.h)
 
 if(WITH_OPENCV)
 	target_link_libraries ( ${PROJECT_NAME} ${OpenCV_LIBS} )

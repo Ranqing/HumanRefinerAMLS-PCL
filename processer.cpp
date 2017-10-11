@@ -27,7 +27,7 @@ void PointcloudProcesser::load_ply(const string &filename) {
     if (0 == size) { m_is_loaded = false; }
     else { m_is_loaded = true; }
 
-    cout << "Pointcloud size: " << m_cloud->width * m_cloud->height
+    cout << "Pointcloud size: " << m_cloud->width << " * " << m_cloud->height
          << " data points (" << pcl::getFieldsList(*m_cloud) << "). " << endl;
 }
 
@@ -83,7 +83,9 @@ void PointcloudProcesser::load_datas(const vector<cv::Vec3f> &points, const vect
     m_cloud_filtered->clear();
 
     int size = colors.size();
-    for(int i = 0; i < size; ++i) {
+    m_cloud->width = size;
+    m_cloud->height = 1;
+    for (int i = 0; i < size; ++i) {
         QingPoint pt;
         pt.x = points[i].val[0];
         pt.y = points[i].val[1];
@@ -97,7 +99,7 @@ void PointcloudProcesser::load_datas(const vector<cv::Vec3f> &points, const vect
     size = m_cloud->width * m_cloud->height;
     if (0 == size) { m_is_loaded = false; }
     else { m_is_loaded = true; }
-    cout << "Pointcloud size: " << m_cloud->width * m_cloud->height
+    cout << "Pointcloud size: " << m_cloud->width << " * " << m_cloud->height
          << " data points (" << pcl::getFieldsList(*m_cloud) << "). " << endl;
 }
 
@@ -105,10 +107,10 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> qing_rgb_vis(pcl::PointClou
 
     cout << "qing_rgb_vis." << endl;
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D viewer"));
-    viewer->setBackgroundColor(0,0,0);
+    viewer->setBackgroundColor(0, 0, 0);
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
     viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "sample cloud");
-    viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud" );
+    viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
     viewer->addCoordinateSystem(1.0);
     viewer->initCameraParameters();
     return viewer;
@@ -121,7 +123,7 @@ void PointcloudProcesser::show_pointcloud() {
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
     viewer = qing_rgb_vis(show_cloud_ptr);
-    while(!viewer->wasStopped()) {
+    while (!viewer->wasStopped()) {
         viewer->spinOnce(100);
         boost::this_thread::sleep(boost::posix_time::microseconds(100000));
     }
@@ -162,7 +164,7 @@ void PointcloudProcesser::down_sampling(int scale /*=4*/) {
         sor.setLeafSize(leafsize, leafsize, leafsize);
         sor.filter(*m_cloud_filtered);
         dst_size = m_cloud_filtered->points.size();
-        cout << "after down-sampling, pointcloud size: " << dst_size << ", " << dst_size * scale << "\tsrc_size = "
+        cout << "after down-sampling, pointcloud size: " << dst_size << " <-- src_size = "
              << src_size << "\tleafsize = " << leafsize << endl;
         leafsize += stepsize;
     }
@@ -182,7 +184,7 @@ void PointcloudProcesser::mls_resampling(float radius) {
     mls.setSearchRadius(radius);
     mls.process(*m_cloud_filtered);
 
-    cout << "after msl_resample: " << m_cloud_filtered->points.size() << endl;
+    cout << "msl_resample: " << m_cloud_filtered->points.size() << " <-- " << m_cloud->points.size() << endl;
     m_cloud = m_cloud_filtered->makeShared();
 
 }
